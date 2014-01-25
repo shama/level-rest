@@ -1,0 +1,37 @@
+{
+  "name": "level-rest",
+  "version": "0.1.0",
+  "description": "A REST adapter for leveldb",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/index.js",
+    "start": "beefy test/browser.js 8080 -- -d"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:shama/level-rest.git"
+  },
+  "keywords": [
+    "leveldb",
+    "rest",
+    "adapter"
+  ],
+  "author": "Kyle Robinson Young <kyle@dontkry.com> (http://dontkry.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shama/level-rest/issues"
+  },
+  "homepage": "https://github.com/shama/level-rest",
+  "devDependencies": {
+    "tape": "~2.3.2",
+    "level": "~0.18.0",
+    "rimraf": "~2.2.6",
+    "async": "~0.2.10"
+  },
+  "dependencies": {
+    "level-sublevel": "~5.2.0",
+    "through": "~2.3.4",
+    "inflect": "~0.3.0",
+    "extend": "~1.2.1"
+  }
+}
