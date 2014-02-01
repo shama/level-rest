@@ -5,6 +5,7 @@ var rimraf = require('rimraf')
 var path = require('path')
 var fs = require('fs')
 var async = require('async')
+var through = require('through')
 
 var fixtures = {
   db: path.resolve(process.cwd(), 'tmp'),
@@ -78,6 +79,22 @@ test('post posts', function(t) {
   }.bind(this))
 })
 
+test('stream to post', function(t) {
+  t.plan(2)
+  var result = null
+  var req = through()
+  req.pipe(this.rest.post('posts')).on('end', function() {
+    this.rest.get('posts/99').on('data', function(data) {
+      result = data
+    }).on('end', function() {
+      t.equal(result.post.id, 99, 'put posts/99 should have left the body alone')
+      t.equal(result.post.title, 'dude', 'put posts/99 should have put the title')
+    })
+  }.bind(this))
+  req.write({ id: 99, title: 'dude' })
+  req.end()
+})
+
 test('put posts/2', function(t) {
   t.plan(2)
   var result = null
@@ -89,6 +106,22 @@ test('put posts/2', function(t) {
       t.equal(result.post.title, 'dude', 'put posts/2 should have put the title')
     })
   }.bind(this))
+})
+
+test('stream to put', function(t) {
+  t.plan(2)
+  var result = null
+  var req = through()
+  req.pipe(this.rest.put('posts/2')).on('end', function() {
+    this.rest.get('posts/2').on('data', function(data) {
+      result = data
+    }).on('end', function() {
+      t.equal(result.post.body, 'This is a post body number 2', 'put posts/2 should have left the body alone')
+      t.equal(result.post.title, 'dude', 'put posts/2 should have put the title')
+    })
+  }.bind(this))
+  req.write({ title: 'dude' })
+  req.end()
 })
 
 test('delete posts/1', function(t) {

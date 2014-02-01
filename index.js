@@ -2,6 +2,7 @@ var sublevel = require('level-sublevel')
 var through = require('through')
 var inflect = require('inflect')
 var extend = require('extend')
+var map = require('map-stream')
 
 function LevelREST(db, options) {
   if (!(this instanceof LevelREST)) return new LevelREST(db, options)
@@ -62,13 +63,26 @@ LevelREST.prototype.put = function(api, data, params, cb) {
     params = {}
   }
   api = this.serialize(api)
-  if (!api.id) return cb(new Error('Must supply a ' + this.id))
   var db = this.db.sublevel(api.api)
-  db.get(api.id, function(err, olddata) {
-    extend(olddata, data)
-    db.put(api.id, olddata, cb)
+  var stream = through(function(d) {
+    if (!api.id) return this.emit('error', new Error('Must supply a ' + self.id))
+    var queue = this.queue
+    if (typeof d[api.singular] === 'object') d = d[api.singular]
+    db.get(api.id, function(err, olddata) {
+      extend(olddata, d)
+      db.put(api.id, olddata, function() {
+        queue(d)
+        stream.resume()
+        if (typeof cb === 'function') stream.end()
+      })
+    })
+  }, function() {
+    this.queue(null)
+    if (typeof cb === 'function') cb()
   })
-  return this
+  stream.pause()
+  if (typeof cb === 'function') stream.write(data)
+  return stream
 }
 
 // Create a new record on an endpoint, ie: POST posts/
@@ -79,10 +93,23 @@ LevelREST.prototype.post = function(api, data, params, cb) {
     params = {}
   }
   api = this.serialize(api)
-  var id = data[this.id] || this.generateId()
   var db = this.db.sublevel(api.api)
-  db.put(id, data, cb)
-  return this
+  var stream = through(function(d) {
+    var queue = this.queue
+    if (typeof d[api.singular] === 'object') d = d[api.singular]
+    var id = d[self.id] || self.generateId()
+    db.put(id, d, function() {
+      queue(d)
+      stream.resume()
+      if (typeof cb === 'function') stream.end()
+    })
+  }, function() {
+    this.queue(null)
+    if (typeof cb === 'function') cb()
+  })
+  stream.pause()
+  if (typeof cb === 'function') stream.write(data)
+  return stream
 }
 
 // Delete a record on an endpoint, ie: DELETE posts/123
