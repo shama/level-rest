@@ -32,6 +32,7 @@
     "level-sublevel": "~5.2.0",
     "through": "~2.3.4",
     "inflect": "~0.3.0",
-    "extend": "~1.2.1"
+    "extend": "~1.2.1",
+    "map-stream": "~0.1.0"
   }
 }
