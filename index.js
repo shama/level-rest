@@ -13,7 +13,8 @@ function LevelREST(db, options) {
   this.serialize = options.serialize || function(url) {
     url = url.split('/')
     if (url[1] === 'undefined') url[1] = null
-    return { api: url[0], id: url[1] || null }
+    var singular = inflect.singularize(url[0])
+    return { api: url[0], id: url[1] || null, singular: singular }
   }
   this.generateId = options.generateId || function() {
     return +Date.now()
@@ -41,8 +42,7 @@ LevelREST.prototype.get = function(api, params) {
   }).on('close', function() {
     var outdata = {}
     if (api.id) {
-      var singular = inflect.singularize(api.api)
-      outdata[singular] = data.shift()
+      outdata[api.singular] = data.shift()
     } else {
       outdata[api.api] = data
     }

@@ -9,6 +9,7 @@ var async = require('async')
 var fixtures = {
   db: path.resolve(process.cwd(), 'tmp'),
   posts: require('./fixtures/posts'),
+  users: require('./fixtures/users'),
 }
 
 // Test helpers
@@ -18,8 +19,10 @@ var test = function(label, fn) {
   testNum++
   var ctx = {}
   ctx.rest = rest(levelup(path.join(fixtures.db, 'db' + testNum), {valueEncoding: 'json'}))
-  async.each(fixtures.posts, function(post, next) {
-    ctx.rest.post('posts', post, next)
+  async.each(['users', 'posts'], function(fixture, next) {
+    async.each(fixtures[fixture], function(f, n) {
+      ctx.rest.post(fixture, f, n)
+    }, next)
   }, function() {
     tape(label, fn.bind(ctx))
   })
@@ -28,15 +31,15 @@ var test = function(label, fn) {
 test('serialize', function(t) {
   t.plan(3)
   var result = this.rest.serialize('posts')
-  var expect = { api: 'posts', id: null }
+  var expect = { api: 'posts', id: null, singular: 'post' }
   t.deepEqual(result, expect, 'serialize should have serialized posts')
 
   result = this.rest.serialize('posts/2')
-  expect = { api: 'posts', id: '2' }
+  expect = { api: 'posts', id: '2', singular: 'post' }
   t.deepEqual(result, expect, 'serialize should have serialized posts/2')
 
   result = this.rest.serialize('posts/')
-  expect = { api: 'posts', id: null }
+  expect = { api: 'posts', id: null, singular: 'post' }
   t.deepEqual(result, expect, 'serialize should have serialized posts/')
 })
 
@@ -51,7 +54,7 @@ test('get posts', function(t) {
   })
 })
 
-test('get post/2', function(t) {
+test('get posts/2', function(t) {
   t.plan(1)
   var result = null
   var expect = { post: fixtures.posts[1], meta: {} }
