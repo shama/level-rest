@@ -64,24 +64,36 @@ LevelREST.prototype.put = function(api, data, params, cb) {
   }
   api = this.serialize(api)
   var db = this.db.sublevel(api.api)
+  var buffer = []
   var stream = through(function(d) {
-    if (!api.id) return this.emit('error', new Error('Must supply a ' + self.id))
-    var queue = this.queue
-    if (typeof d[api.singular] === 'object') d = d[api.singular]
-    db.get(api.id, function(err, olddata) {
-      extend(olddata, d)
-      db.put(api.id, olddata, function() {
-        queue(d)
-        stream.resume()
-        if (typeof cb === 'function') stream.end()
-      })
-    })
+    buffer.push(d)
   }, function() {
-    this.queue(null)
-    if (typeof cb === 'function') cb()
+    var len = buffer.length
+    var queue = this.queue
+    // TODO: Needs correct response
+    var res = { meta: { success: true } }
+    function done() {
+      len--
+      if (len < 1) {
+        queue(res)
+        queue(null)
+        if (typeof cb === 'function') cb(null, res)
+      }
+    }
+    for (var i = 0; i < buffer.length; i++) {
+      var d = buffer[i]
+      if (typeof d[api.singular] === 'object') d = d[api.singular]
+      db.get(api.id, function(err, olddata) {
+        extend(olddata, d)
+        db.put(api.id, olddata, done)
+      })
+    }
   })
-  stream.pause()
-  if (typeof cb === 'function') stream.write(data)
+  if (!api.id) return stream.emit('error', new Error('Must supply a ' + this.id))
+  if (typeof cb === 'function') {
+    stream.write(data)
+    stream.end()
+  }
   return stream
 }
 
@@ -94,21 +106,33 @@ LevelREST.prototype.post = function(api, data, params, cb) {
   }
   api = this.serialize(api)
   var db = this.db.sublevel(api.api)
+  var buffer = []
   var stream = through(function(d) {
-    var queue = this.queue
-    if (typeof d[api.singular] === 'object') d = d[api.singular]
-    var id = d[self.id] || self.generateId()
-    db.put(id, d, function() {
-      queue(d)
-      stream.resume()
-      if (typeof cb === 'function') stream.end()
-    })
+    buffer.push(d)
   }, function() {
-    this.queue(null)
-    if (typeof cb === 'function') cb()
+    var len = buffer.length
+    var queue = this.queue
+    // TODO: Needs correct response
+    var res = { meta: { success: true } }
+    function done() {
+      len--
+      if (len < 1) {
+        queue(res)
+        queue(null)
+        if (typeof cb === 'function') cb(null, res)
+      }
+    }
+    for (var i = 0; i < buffer.length; i++) {
+      var d = buffer[i]
+      if (typeof d[api.singular] === 'object') d = d[api.singular]
+      var id = d[self.id] || self.generateId()
+      db.put(id, d, done)
+    }
   })
-  stream.pause()
-  if (typeof cb === 'function') stream.write(data)
+  if (typeof cb === 'function') {
+    stream.write(data)
+    stream.end()
+  }
   return stream
 }
 
