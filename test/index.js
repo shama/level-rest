@@ -137,6 +137,24 @@ test('delete posts/1', function(t) {
   }.bind(this))
 })
 
+test('delete posts/1', function(t) {
+  t.plan(1)
+  var result = null
+  var expect = { posts: fixtures.posts.slice(1), meta: {} }
+  var req = through()
+  req.pipe(this.rest.delete('posts/1')).on('data', function(data) {
+    result = data
+  }).on('end', function() {
+    this.rest.get('posts').on('data', function(data) {
+      result = data
+    }).on('end', function() {
+      t.deepEqual(result, expect, 'post/1 should have been deleted')
+    })
+  }.bind(this))
+  req.write(1)
+  req.end()
+})
+
 // Clean up on exit
 process.on('exit', function() {
   rimraf.sync(fixtures.db)

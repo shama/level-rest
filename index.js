@@ -137,6 +137,23 @@ LevelREST.prototype.delete = function(api, params, cb) {
   }
   api = this.serialize(api)
   var db = this.db.sublevel(api.api)
-  db.del(api.id, cb)
-  return this
+  var buffer = []
+  var stream = through(function(d) {
+    var id = (typeof d !== 'object') ? d : (d[self.id]) ? d[self.id] : api.id
+    buffer.push({ type: 'del', key: id })
+  }, function() {
+    var queue = this.queue
+    db.batch(buffer, function(err) {
+      // TODO: Needs correct response
+      var res = { meta: { success: true } }
+      queue(res)
+      queue(null)
+      if (typeof cb === 'function') cb(null, res)
+    })
+  })
+  if (typeof cb === 'function') {
+    stream.write(api.id)
+    stream.end()
+  }
+  return stream
 }
