@@ -108,26 +108,18 @@ LevelREST.prototype.post = function(api, data, params, cb) {
   var db = this.db.sublevel(api.api)
   var buffer = []
   var stream = through(function(d) {
-    buffer.push(d)
+    if (typeof d[api.singular] === 'object') d = d[api.singular]
+    var id = d[self.id] || self.generateId()
+    buffer.push({ type: 'put', key: id, value: d })
   }, function() {
-    var len = buffer.length
     var queue = this.queue
-    // TODO: Needs correct response
-    var res = { meta: { success: true } }
-    function done() {
-      len--
-      if (len < 1) {
-        queue(res)
-        queue(null)
-        if (typeof cb === 'function') cb(null, res)
-      }
-    }
-    for (var i = 0; i < buffer.length; i++) {
-      var d = buffer[i]
-      if (typeof d[api.singular] === 'object') d = d[api.singular]
-      var id = d[self.id] || self.generateId()
-      db.put(id, d, done)
-    }
+    db.batch(buffer, function(err) {
+      // TODO: Needs correct response
+      var res = { meta: { success: true } }
+      queue(res)
+      queue(null)
+      if (typeof cb === 'function') cb(null, res)
+    })
   })
   if (typeof cb === 'function') {
     stream.write(data)
