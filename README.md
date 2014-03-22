@@ -13,7 +13,6 @@ var LevelREST = require('level-rest')
 var db = levelup('./mydb', {valueEncoding: 'json'})
 var rest = new LevelREST(db, {
   id: 'id',
-  separator: ':',
   metaKey: 'meta',
   serialize: function(url) {
     url = url.split('/')

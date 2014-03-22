@@ -9,7 +9,6 @@ function LevelREST(db, options) {
   this.db = sublevel(db)
   options = options || {}
   this.id = options.id || 'id'
-  this.separator = options.separator || ':'
   this.metaKey = options.metaKey || 'meta'
   this.serialize = options.serialize || function(url) {
     url = url.split('/')
