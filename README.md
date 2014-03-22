@@ -49,6 +49,28 @@ rest.delete('people/1', function() {
 })
 ```
 
+### Everything Streams
+
+The primary goal of this adapter is to be able to stream requests in to leveldb and stream out to a response.
+
+Here is an example using [Jaws](https://www.npmjs.org/package/jaws):
+
+```js
+// Create a REST interface to our LevelDB
+var rest = new LevelREST(levelup('./mydb', {valueEncoding: 'json'}))
+
+// Create a server
+var app = jaws()
+
+// Wire up API endpoints
+app.route('/api/:endpoint/:id?', function(req, res) {
+  var id = req.route.params.id || ''
+  var endpoint = req.route.params.endpoint
+  var method = req.method.toLowerCase()
+  req.pipe(rest[method](endpoint + '/' + id)).pipe(res)
+})
+```
+
 ### With Relationships
 
 > Relationships are a work in progress
