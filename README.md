@@ -1,4 +1,4 @@
-# level-rest [![Build Status](https://secure.travis-ci.org/shama/level-rest.png?branch=master)](http://travis-ci.org/shama/level-rest)
+# level-rest [![Build Status](https://secure.travis-ci.org/shama/level-rest.png?branch=master)](http://travis-ci.org/shama/level-rest) [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
 > A REST adapter for [LevelUP](https://github.com/rvagg/node-levelup)
 
