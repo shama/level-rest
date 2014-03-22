@@ -23,10 +23,13 @@
   },
   "homepage": "https://github.com/shama/level-rest",
   "devDependencies": {
-    "tape": "~2.3.2",
-    "level": "~0.18.0",
-    "rimraf": "~2.2.6",
-    "async": "~0.2.10"
+    "tape": "^2.3.2",
+    "level": "^0.18.0",
+    "rimraf": "^2.2.6",
+    "async": "^0.2.10",
+    "beefy": "^1.1.0",
+    "level-js": "^2.0.0",
+    "browserify": "^3.33.0"
   },
   "dependencies": {
     "level-sublevel": "~5.2.0",
