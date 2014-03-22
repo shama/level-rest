@@ -47,6 +47,19 @@ rest.delete('people/1', function() {
 })
 ```
 
+### With Relationships
+
+> Relationships are a work in progress
+
+```js
+rest.get('people').belongsTo('profiles').on('data', function(data) {
+  /*
+  data = {
+  }
+  */
+})
+```
+
 ## License
-Copyright (c) 2013 Kyle Robinson Young  
+Copyright (c) 2014 Kyle Robinson Young  
 Licensed under the MIT license.
