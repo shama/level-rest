@@ -34,5 +34,9 @@
     "inflect": "~0.3.0",
     "extend": "~1.2.1",
     "map-stream": "~0.1.0"
-  }
+  },
+  "files": [
+    "index.js",
+    "LICENSE-MIT"
+  ]
 }
