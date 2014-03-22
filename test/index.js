@@ -66,6 +66,42 @@ test('get posts/2', function(t) {
   })
 })
 
+test('get posts belongsTo users', function(t) {
+  t.plan(4)
+  var result = null
+  this.rest.get('posts').belongsTo('users').on('data', function(data) {
+    result = data
+  }).on('end', function() {
+    for (var i = 0; i < result.posts.length; i++) {
+      var post = result.posts[i]
+      t.equal(post.title, fixtures.posts[i].title, 'posts title was not correctly set')
+      t.equal(post.user.name, fixtures.users[i].name, 'users belonging to posts didnt get set correctly')
+    }
+  })
+})
+
+test('get posts/2 belongsTo users', function(t) {
+  t.plan(1)
+  var result = null
+  var expect = { post: fixtures.posts[1], user: fixtures.users[1], meta: {} }
+  this.rest.get('posts/2').belongsTo('users').on('data', function(data) {
+    result = data
+  }).on('end', function() {
+    t.deepEqual(result, expect, 'posts/2 belongsTo users should have included user')
+  })
+})
+
+test('get users/2 hasMany posts', function(t) {
+  t.plan(1)
+  var result = null
+  var expect = { post: fixtures.posts[1], user: fixtures.users[1], meta: {} }
+  this.rest.get('users/2').belongsTo('posts').on('data', function(data) {
+    result = data
+  }).on('end', function() {
+    t.deepEqual(result, expect, 'posts/2 belongsTo users should have included user')
+  })
+})
+
 test('post posts', function(t) {
   t.plan(2)
   var result = null
