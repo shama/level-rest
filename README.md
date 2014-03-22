@@ -2,6 +2,8 @@
 
 > A REST adapter for [LevelUP](https://github.com/rvagg/node-levelup)
 
+[![NPM](https://nodei.co/npm/level-rest.png?compact=true)](https://nodei.co/npm/level-rest/)
+
 ## Example
 
 ```js
