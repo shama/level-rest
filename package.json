@@ -29,14 +29,14 @@
     "async": "^0.2.10",
     "beefy": "^1.1.0",
     "level-js": "^2.0.0",
+    "concat-stream": "^1.4.7",
     "browserify": "^3.33.0"
   },
   "dependencies": {
-    "level-sublevel": "~5.2.0",
-    "through": "~2.3.4",
+    "debug": "^2.1.0",
     "inflect": "~0.3.0",
-    "extend": "~1.2.1",
-    "map-stream": "~0.1.0"
+    "level-sublevel": "~5.2.0",
+    "through2": "^0.6.3"
   },
   "files": [
     "index.js",

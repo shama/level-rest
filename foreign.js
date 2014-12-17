@@ -1,5 +1,5 @@
 var inflect = require('inflect')
-var map = require('map-stream')
+var through = require('through2')
 
 module.exports.hasMany = function(out, model) {
   // TODO: Build this
@@ -14,7 +14,7 @@ module.exports.belongsTo = function(opts) {
   var db = opts.db
   var singular = inflect.singularize(model)
   var key = singular + '_id'
-  return map(function(data, cb) {
+  return through.obj(function(data, enc, cb) {
     if (api.id) {
       // belongsTo with one
       data[singular] = {}
