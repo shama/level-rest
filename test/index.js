@@ -16,7 +16,7 @@ var fixtures = {
 // Test helpers
 if (!fs.existsSync(fixtures.db)) fs.mkdirSync(fixtures.db)
 var testNum = 0
-var test = function(label, fn) {
+var test = function(label, fn, only) {
   testNum++
   var ctx = {}
   ctx.rest = rest(levelup(path.join(fixtures.db, 'db' + testNum), {valueEncoding: 'json'}))
@@ -25,7 +25,8 @@ var test = function(label, fn) {
       ctx.rest.post(fixture, f, n)
     }, next)
   }, function() {
-    tape(label, fn.bind(ctx))
+    if (only === true) tape.only(label, fn.bind(ctx))
+    else tape(label, fn.bind(ctx))
   })
 }
 
