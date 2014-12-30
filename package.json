@@ -4,7 +4,7 @@
   "description": "A REST adapter for leveldb",
   "main": "index.js",
   "scripts": {
-    "test": "node test/index.js",
+    "test": "node test/index.js | tap-spec",
     "start": "beefy test/browser.js 8080 -- -d"
   },
   "repository": {
@@ -23,20 +23,21 @@
   },
   "homepage": "https://github.com/shama/level-rest",
   "devDependencies": {
-    "tape": "^2.3.2",
-    "level": "^0.18.0",
-    "rimraf": "^2.2.6",
     "async": "^0.2.10",
     "beefy": "^1.1.0",
+    "browserify": "^8.0.2",
+    "level": "^0.18.0",
     "level-js": "^2.0.0",
-    "browserify": "^3.33.0"
+    "rimraf": "^2.2.8",
+    "tap-spec": "^2.1.2",
+    "tape": "^3.0.3"
   },
   "dependencies": {
-    "level-sublevel": "~5.2.0",
-    "through": "~2.3.4",
-    "inflect": "~0.3.0",
     "extend": "~1.2.1",
-    "map-stream": "~0.1.0"
+    "inflect": "~0.3.0",
+    "level-sublevel": "^5.2.3",
+    "map-stream": "~0.1.0",
+    "through": "~2.3.4"
   },
   "files": [
     "index.js",

@@ -91,16 +91,16 @@ test('get posts/2 belongsTo users', function(t) {
   })
 })
 
-test('get users/2 hasMany posts', function(t) {
-  t.plan(1)
-  var result = null
-  var expect = { post: fixtures.posts[1], user: fixtures.users[1], meta: {} }
-  this.rest.get('users/2').belongsTo('posts').on('data', function(data) {
-    result = data
-  }).on('end', function() {
-    t.deepEqual(result, expect, 'posts/2 belongsTo users should have included user')
-  })
-})
+// test('get users/2 hasMany posts', function(t) {
+//   t.plan(1)
+//   var result = null
+//   var expect = { post: fixtures.posts[1], user: fixtures.users[1], meta: {} }
+//   this.rest.get('users/2').belongsTo('posts').on('data', function(data) {
+//     result = data
+//   }).on('end', function() {
+//     t.deepEqual(result, expect, 'posts/2 belongsTo users should have included user')
+//   })
+// })
 
 test('post posts', function(t) {
   t.plan(2)
